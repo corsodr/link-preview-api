@@ -35,9 +35,12 @@ app.post('/api/preview', async (req, res) => {
   });
 
 
-app.listen(port, () => {
-    console.log(`Server running on port ${port}`);
-});
+  // review this 
+  if (process.env.NODE_ENV !== 'production') {
+    const port = process.env.PORT || 3000;
+    app.listen(port, () => {
+      console.log(`Server running on port ${port}`);
+    });
+  }
 
-// where should I put this? 
 export default app;
