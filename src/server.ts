@@ -9,6 +9,11 @@ const port = process.env.PORT || 3000;
 app.use(express.json());
 app.use(cors());
 
+app.get('/', (req, res) => {
+  res.send('Link Preview API is running. Send a POST request to /api/preview to use the API.');
+});
+
+
 app.post('/api/preview', async (req, res) => {
     try {
       const { url } = req.body;
