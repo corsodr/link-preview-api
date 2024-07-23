@@ -1,4 +1,6 @@
 Today 
+- build project 
+
 - cost limit 
 - project name 
 - update domain
