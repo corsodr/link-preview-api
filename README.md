@@ -12,4 +12,5 @@ Queue
 - author 
 - reddit posts
 - blog posts 
+- deploy without vercel.json 
 - code feedback 
