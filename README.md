@@ -22,13 +22,16 @@ Request body:
 {
   "url": "https://example.com"
 }
+```
 
 Response: 
+```json 
 {
   "title": "Example Domain",
   "favicon": "https://example.com/favicon.ico",
   "description": "This domain is for use in illustrative examples in documents.",
   "image": "https://example.com/image.jpg"
 }
+```
 
 Note: This API is currently in development and not ready for production. 
