@@ -10,7 +10,7 @@ The API takes a URL and returns the following link preview data:
 - description 
 - image 
 
-It works by fetching the HTML for the provided URL, using Cheerio to parse the HTML, and extracting link preview data from metatags.
+It fetches the HTML for the URL, parses the HTML with Cheerio, and extracts link preview data from metatags.
 
 
 ## Try it 
@@ -20,17 +20,18 @@ https://link-preview-api-v1.vercel.app/api/preview
 Request body:
 ```json
 {
-  "url": "https://example.com"
+  "url": "https://github.com/corsodr/link-preview-api"
 }
 ```
 
 Response: 
 ```json 
 {
-  "title": "Example Domain",
-  "favicon": "https://example.com/favicon.ico",
-  "description": "This domain is for use in illustrative examples in documents.",
-  "image": "https://example.com/image.jpg"
+    "url": "https://github.com/corsodr/link-preview-api",
+    "title": "GitHub - corsodr/link-preview-api",
+    "favicon": "https://github.githubassets.com/favicons/favicon.svg",
+    "description": "Contribute to corsodr/link-preview-api development by creating an account on GitHub.",
+    "image": "https://opengraph.githubassets.com/44643e8687367611f1afe4c53673569ae53731e40b5ae0dc55f6cf78cc6a8e86/corsodr/link-preview-api"
 }
 ```
 
