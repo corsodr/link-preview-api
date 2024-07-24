@@ -10,7 +10,7 @@ The API takes a URL and returns the following link preview data:
 - description 
 - image 
 
-It fetches the HTML for the URL, parses the HTML with Cheerio, and extracts link preview data from metatags.
+It fetches the HTML for the URL, parses the HTML, and extracts link preview data from metatags.
 
 
 ## Try it 
