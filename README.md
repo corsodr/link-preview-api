@@ -4,9 +4,11 @@
 
 This is v1 of a link preview API. 
 
-The API takes a URL and returns the following link preview data:
+The API takes a URL and returns the following link preview data if it exists:
+- url
+- domain
 - title
-- favicon
+- favicon 
 - description 
 - image 
 
