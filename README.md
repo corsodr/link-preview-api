@@ -30,10 +30,11 @@ Response:
 ```json 
 {
     "url": "https://github.com/corsodr/link-preview-api",
+    "domain": "github.com",
     "title": "GitHub - corsodr/link-preview-api",
     "favicon": "https://github.githubassets.com/favicons/favicon.svg",
     "description": "Contribute to corsodr/link-preview-api development by creating an account on GitHub.",
-    "image": "https://opengraph.githubassets.com/44643e8687367611f1afe4c53673569ae53731e40b5ae0dc55f6cf78cc6a8e86/corsodr/link-preview-api"
+    "image": "https://opengraph.githubassets.com/7e75ad5d42119e3e30873493b49af8ffff7aea531c57241a3e82bc77b4608c79/corsodr/link-preview-api"
 }
 ```
 
