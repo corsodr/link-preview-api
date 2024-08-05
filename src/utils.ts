@@ -23,8 +23,14 @@ export function extractPreviewData(html: string, url: string): PreviewData {
         return image ? new URL(image, url).href : '';
     }
 
+    const getDomain = (url: string): string => {
+        const domain = new URL(url).hostname;
+        return domain.startsWith('www.') ? domain.slice(4) : domain;
+    }
+
     return {
         url,
+        domain: getDomain(url),
         title: $('title').text() || '',
         favicon: getFavicon(),
         description: getMetatag('description'),
