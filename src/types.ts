@@ -1,4 +1,4 @@
-export interface PreviewData {
+export interface Preview {
     url: string;
     domain: string;
     title: string;

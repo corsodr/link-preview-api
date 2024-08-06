@@ -1,7 +1,7 @@
 import * as cheerio from 'cheerio';
-import { PreviewData } from './types';
+import { Preview } from './types';
 
-export function extractPreviewData(html: string, url: string): PreviewData {
+export function extractPreviewData(html: string, url: string): Preview {
     const $ = cheerio.load(html);
 
     const getMetatag = (name: string) => 
