@@ -32,7 +32,12 @@ app.post('/api/preview', async (req, res) => {
       const { url } = req.body;
       console.log(`Fetching URL: ${url}`);
   
-      const response = await fetch(url);
+      // why did I remove the user agent? 
+      const response = await fetch(url, {
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36'
+        }
+      });
       console.log(`Response status: ${response.status}`);
   
       const html = await response.text();
@@ -42,7 +47,7 @@ app.post('/api/preview', async (req, res) => {
       console.log(`Preview data: ${JSON.stringify(previewData)}`);
   
       res.json(previewData);
-      
+
     } catch (error) {
       console.error('Error generating preview:', error);
       res.status(500).json({ error: 'Failed to generate preview' });
