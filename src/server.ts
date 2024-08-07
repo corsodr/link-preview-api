@@ -16,35 +16,17 @@ app.get('/', (req, res) => {
 
 app.post('/api/preview', async (req, res) => {
     try {
-      // const { url } = req.body;
-  
-      // if (!url) {
-      //   return res.status(400).json({ error: 'URL is required' });
-      // }
-  
-      // const response = await fetch(url);
-      // const html = await response.text();
-  
-      // const previewData = extractPreviewData(html, url);
-  
-      // res.json(previewData);
-
       const { url } = req.body;
-      console.log(`Fetching URL: ${url}`);
   
-      // why did I remove the user agent? 
-      const response = await fetch(url, {
-        headers: {
-          'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36'
-        }
-      });
-      console.log(`Response status: ${response.status}`);
+      if (!url) {
+        return res.status(400).json({ error: 'URL is required' });
+      }
   
+      // should I add user agent header? 
+      const response = await fetch(url);
       const html = await response.text();
-      console.log(`Response length: ${html.length} characters`);
   
       const previewData = extractPreviewData(html, url);
-      console.log(`Preview data: ${JSON.stringify(previewData)}`);
   
       res.json(previewData);
 
