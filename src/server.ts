@@ -45,7 +45,10 @@ app.post('/api/preview', async (req, res) => {
 
     } catch (error) {
       console.error('Error generating preview:', error);
-      res.status(500).json({ error: 'Failed to generate preview', details: error.message });
+      res.status(500).json({ 
+        error: 'Failed to generate preview', 
+        details: error instanceof Error ? error.message : String(error) 
+      });
     }
   });
 
