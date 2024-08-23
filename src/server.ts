@@ -23,16 +23,20 @@ app.post('/api/preview', async (req, res) => {
       }
   
       console.log(`Fetching URL: ${url}`);
-      // check header 
       const response = await fetch(url, {
         headers: {
-          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36 Edg/91.0.864.59',
+          'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+          'Accept-Language': 'en-US,en;q=0.5',
+          'Referer': 'https://www.google.com/'
         }
       });
       console.log('Fetch response status:', response.status);
+      console.log('Response headers:', response.headers);
       
       const html = await response.text();
       console.log('HTML content length:', html.length);
+      console.log('First 500 characters of HTML:', html.substring(0, 500));
   
       const previewData = extractPreviewData(html, url);
       console.log('Extracted preview data:', previewData);
@@ -41,10 +45,7 @@ app.post('/api/preview', async (req, res) => {
 
     } catch (error) {
       console.error('Error generating preview:', error);
-      res.status(500).json({ 
-        error: 'Failed to generate preview', 
-        details: error instanceof Error ? error.message : String(error) 
-      });
+      res.status(500).json({ error: 'Failed to generate preview', details: error.message });
     }
   });
 
