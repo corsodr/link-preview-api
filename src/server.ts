@@ -3,6 +3,7 @@ import cors from 'cors';
 import { extractPreviewData } from './utils';
 import robotsParser from 'robots-parser';
 
+// why isn't it redploying? 
 const app = express();
 const port = process.env.PORT || 3000;
 
