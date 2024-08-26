@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import { extractPreviewData } from './utils';
+import robotsParser from 'robots-parser';
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -8,49 +9,69 @@ const port = process.env.PORT || 3000;
 app.use(express.json());
 app.use(cors());
 
-app.get('/', (req, res) => {
-  res.send('Link Preview API is running. Send a POST request to /api/preview to use the API.');
-});
+const checkRobotsTxt = async (url: string): Promise<boolean> => {
+  try {
+    const { protocol, host } = new URL(url);
+    const robotsTxtUrl = `${protocol}//${host}/robots.txt`;
+    const response = await fetch(robotsTxtUrl);
+    const robotsTxt = await response.text();
+    const robots = robotsParser(robotsTxtUrl, robotsTxt);
+    return robots.isAllowed(url, 'LinkPreviewBot') ?? true;
+  } catch (error) {
+    console.error('Error checking robots.txt:', error);
+    return true;  // if we can't check robots.txt, assume it's allowed
+  }
+};
 
 app.post('/api/preview', async (req, res) => {
-    try {
-      console.log('Received request:', req.body);
-      const { url } = req.body;
-  
-      if (!url) {
-        console.log('Error: URL is required');
-        return res.status(400).json({ error: 'URL is required' });
-      }
-  
-      console.log(`Fetching URL: ${url}`);
-      const response = await fetch(url, {
-        headers: {
-          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36 Edg/91.0.864.59',
-          'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-          'Accept-Language': 'en-US,en;q=0.5',
-          'Referer': 'https://www.google.com/'
-        }
-      });
-      console.log('Fetch response status:', response.status);
-      console.log('Response headers:', response.headers);
-      
-      const html = await response.text();
-      console.log('HTML content length:', html.length);
-      console.log('First 500 characters of HTML:', html.substring(0, 500));
-  
-      const previewData = extractPreviewData(html, url);
-      console.log('Extracted preview data:', previewData);
-  
-      res.json(previewData);
+  try {
+    const { url } = req.body;
 
-    } catch (error) {
-      console.error('Error generating preview:', error);
-      res.status(500).json({ 
-        error: 'Failed to generate preview', 
-        details: error instanceof Error ? error.message : String(error) 
-      });
+    if (!url) {
+      console.log('Error: URL is required');
+      return res.status(400).json({ error: 'URL is required' });
     }
-  });
+
+    const isAllowed = await checkRobotsTxt(url);
+    if (!isAllowed) {
+      return res.status(403).json({ error: 'Access to this URL is not allowed by robots.txt' });
+    }
+
+    const headers = {
+      // update url 
+      'User-Agent': 'Mozilla/5.0 (compatible; LinkPreviewBot/1.0; +http://www.yourwebsite.com/bot.html)',
+      'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+      'Accept-Language': 'en-US,en;q=0.5',
+      'Accept-Encoding': 'gzip, deflate, br',
+      'DNT': '1',
+      'Connection': 'keep-alive',
+      'Upgrade-Insecure-Requests': '1',
+      'Sec-Fetch-Dest': 'document',
+      'Sec-Fetch-Mode': 'navigate',
+      'Sec-Fetch-Site': 'none',
+      'Sec-Fetch-User': '?1',
+      'Cache-Control': 'max-age=0',
+    };
+
+    const response = await fetch(url, { headers });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const html = await response.text();
+    const previewData = extractPreviewData(html, url);
+
+    res.json(previewData);
+
+  } catch (error) {
+    console.error('Error generating preview:', error);
+    res.status(500).json({ 
+      error: 'Failed to generate preview', 
+      details: error instanceof Error ? error.message : String(error) 
+    });
+  }
+});
 
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
