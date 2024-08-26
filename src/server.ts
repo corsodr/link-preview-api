@@ -52,6 +52,7 @@ app.post('/api/preview', async (req, res) => {
       return res.status(403).json({ error: 'Access to this URL is not allowed by robots.txt' });
     }
 
+    // review headers 
     const headers = {
       'User-Agent': 'Mozilla/5.0 (compatible; LinkPreviewBot/1.0; +http://www.yourwebsite.com/bot.html)',
       'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
