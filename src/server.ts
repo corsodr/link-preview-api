@@ -6,8 +6,15 @@ import robotsParser from 'robots-parser';
 const app = express();
 const port = process.env.PORT || 3000;
 
+// review this if it works 
+const corsOptions = {
+  origin: '*', // Be more specific in production
+  methods: ['GET', 'POST'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
-app.use(cors());
 
 const checkRobotsTxt = async (url: string): Promise<boolean> => {
   try {
@@ -24,6 +31,7 @@ const checkRobotsTxt = async (url: string): Promise<boolean> => {
 };
 
 app.post('/api/preview', async (req, res) => {
+  console.log('Request body:', req.body);
   try {
     const { url } = req.body;
 
