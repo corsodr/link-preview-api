@@ -3,7 +3,6 @@ import cors from 'cors';
 import { extractPreviewData } from './utils';
 import robotsParser from 'robots-parser';
 
-// why isn't it redploying? 
 const app = express();
 const port = process.env.PORT || 3000;
 
@@ -39,7 +38,6 @@ const checkRobotsTxt = async (url: string): Promise<boolean> => {
     if (error instanceof Error) {
       logWithTimestamp(`Error name: ${error.name}, message: ${error.message}`);
     }
-    // why return true here
     return true;
   }
 };
@@ -64,7 +62,6 @@ app.post('/api/preview', async (req, res) => {
       return res.status(403).json({ error: 'Access to this URL is not allowed by robots.txt' });
     }
 
-    // review headers 
     const headers = {
       'User-Agent': 'Mozilla/5.0 (compatible; LinkPreviewBot/1.0; +http://www.yourwebsite.com/bot.html)',
       'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
@@ -92,10 +89,22 @@ app.post('/api/preview', async (req, res) => {
     }
 
     const html = await response.text();
-    logWithTimestamp(`Received HTML content (first 500 chars): ${html.substring(0, 500)}`);
+    logWithTimestamp(`Received HTML content (first 1000 chars): ${html.substring(0, 1000)}`);
 
     const previewData = extractPreviewData(html, url);
     logWithTimestamp(`Extracted preview data: ${JSON.stringify(previewData)}`);
+
+    // Log the outgoing IP address
+    const ipResponse = await fetch('https://api.ipify.org?format=json');
+    const ipData = await ipResponse.json();
+    logWithTimestamp(`Outgoing IP address: ${ipData.ip}`);
+
+    // Log Node.js version
+    logWithTimestamp(`Node.js version: ${process.version}`);
+
+    // Log key dependency versions
+    const dependencies = require('./package.json').dependencies;
+    logWithTimestamp(`Key dependencies: ${JSON.stringify(dependencies)}`);
 
     res.json(previewData);
 
@@ -104,7 +113,6 @@ app.post('/api/preview', async (req, res) => {
     if (error instanceof Error) {
       logWithTimestamp(`Error name: ${error.name}, message: ${error.message}`);
     }
-    // simplify this 
     res.status(500).json({ 
       error: 'Failed to generate preview', 
       details: error instanceof Error ? error.message : String(error) 
@@ -112,7 +120,6 @@ app.post('/api/preview', async (req, res) => {
   }
 });
 
-// Add this at the end of your routes
 app.use('*', (req, res) => {
   logWithTimestamp(`Received ${req.method} request to ${req.originalUrl}`);
   res.status(404).json({ error: 'Not Found' });
