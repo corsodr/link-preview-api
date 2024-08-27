@@ -1,5 +1,6 @@
 import express from 'express';
 import cors from 'cors';
+import path from 'path';
 import { extractPreviewData } from './utils';
 import robotsParser from 'robots-parser';
 
@@ -103,8 +104,13 @@ app.post('/api/preview', async (req, res) => {
     logWithTimestamp(`Node.js version: ${process.version}`);
 
     // Log key dependency versions
-    const dependencies = require('./package.json').dependencies;
-    logWithTimestamp(`Key dependencies: ${JSON.stringify(dependencies)}`);
+    try {
+      const packageJsonPath = path.join(__dirname, '..', 'package.json');
+      const { dependencies } = require(packageJsonPath);
+      logWithTimestamp(`Key dependencies: ${JSON.stringify(dependencies)}`);
+    } catch (error) {
+      logWithTimestamp(`Error loading package.json: ${error}`);
+    }
 
     res.json(previewData);
 
