@@ -4,7 +4,10 @@ import { extractPreviewData } from './utils';
 import robotsParser from 'robots-parser';
 
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 8081;
+
+app.use(cors());
+app.use(express.json());
 
 app.use(cors());
 app.use(express.json());
@@ -68,3 +71,5 @@ app.post('/api/preview', async (req, res) => {
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });
+
+module.exports = app;
