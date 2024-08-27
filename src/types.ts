@@ -5,5 +5,4 @@ export interface Preview {
     favicon: string;
     description: string;
     image: string;
-    isYouTubeVideoPage: boolean;
 }
