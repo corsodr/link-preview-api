@@ -9,10 +9,16 @@ const port = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 const logWithTimestamp = (message: string) => {
   console.log(`[${new Date().toISOString()}] ${message}`);
 };
+
+app.use((req, res, next) => {
+  logWithTimestamp(`Received ${req.method} request to ${req.originalUrl}`);
+  next();
+});
 
 const checkRobotsTxt = async (url: string): Promise<boolean> => {
   try {
@@ -104,6 +110,12 @@ app.post('/api/preview', async (req, res) => {
       details: error instanceof Error ? error.message : String(error) 
     });
   }
+});
+
+// Add this at the end of your routes
+app.use('*', (req, res) => {
+  logWithTimestamp(`Received ${req.method} request to ${req.originalUrl}`);
+  res.status(404).json({ error: 'Not Found' });
 });
 
 app.listen(port, () => {
