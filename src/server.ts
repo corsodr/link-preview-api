@@ -20,6 +20,8 @@ const checkRobotsTxt = async (url: string): Promise<boolean> => {
     const robotsTxtUrl = `${protocol}//${host}/robots.txt`;
     logWithTimestamp(`Fetching robots.txt from: ${robotsTxtUrl}`);
     const response = await fetch(robotsTxtUrl);
+    logWithTimestamp(`Robots.txt response status: ${response.status}`);
+    logWithTimestamp(`Robots.txt response headers: ${JSON.stringify(Object.fromEntries(response.headers))}`);
     const robotsTxt = await response.text();
     logWithTimestamp(`Robots.txt content: ${robotsTxt.substring(0, 200)}...`);
     const robots = robotsParser(robotsTxtUrl, robotsTxt);
@@ -28,7 +30,10 @@ const checkRobotsTxt = async (url: string): Promise<boolean> => {
     return isAllowed;
   } catch (error) {
     logWithTimestamp(`Error checking robots.txt: ${error}`);
-    // why return true here?
+    if (error instanceof Error) {
+      logWithTimestamp(`Error name: ${error.name}, message: ${error.message}`);
+    }
+    // why return true here
     return true;
   }
 };
@@ -90,6 +95,10 @@ app.post('/api/preview', async (req, res) => {
 
   } catch (error) {
     logWithTimestamp(`Error generating preview: ${error}`);
+    if (error instanceof Error) {
+      logWithTimestamp(`Error name: ${error.name}, message: ${error.message}`);
+    }
+    // simplify this 
     res.status(500).json({ 
       error: 'Failed to generate preview', 
       details: error instanceof Error ? error.message : String(error) 
