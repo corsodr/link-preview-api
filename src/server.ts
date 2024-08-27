@@ -11,6 +11,13 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+function logAllHeaders(headers: Record<string, string>) {
+  logWithTimestamp('All request headers:');
+  Object.entries(headers).forEach(([key, value]) => {
+    logWithTimestamp(`${key}: ${value}`);
+  });
+}
+
 const logWithTimestamp = (message: string) => {
   console.log(`[${new Date().toISOString()}] ${message}`);
 };
@@ -78,6 +85,10 @@ app.post('/api/preview', async (req, res) => {
       'Cache-Control': 'max-age=0',
     };
 
+
+    logWithTimestamp('Logging request headers before fetch:');
+    logAllHeaders(headers);
+    
     logWithTimestamp(`Fetching URL with headers: ${JSON.stringify(headers)}`);
     const response = await fetch(url, { headers });
 
