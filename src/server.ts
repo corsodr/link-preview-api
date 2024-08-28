@@ -14,7 +14,6 @@ app.post('/api/preview', async (req, res) => {
     if (!url) {
       return res.status(400).json({ error: 'URL is required' });
     }
-    // review headers 
     const headers = {
       'User-Agent': 'Mozilla/5.0 (compatible; LinkPreviewBot/1.0; +http://www.yourwebsite.com/bot.html)',
       'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
@@ -22,7 +21,6 @@ app.post('/api/preview', async (req, res) => {
       'Accept-Encoding': 'gzip, deflate, br',
       'Connection': 'keep-alive',
       'Cache-Control': 'max-age=0',
-      'Referer': 'https://link-preview-api-v1.vercel.app/api/preview'
     };
     const response = await fetch(url, { headers });
     if (!response.ok) {
@@ -30,13 +28,19 @@ app.post('/api/preview', async (req, res) => {
     }
     const html = await response.text();
     const previewData = extractPreviewData(html, url);
-    // review res 
-    res.json(previewData);
-  // review error 
+    res.json({
+      success: true,
+      data: previewData,
+      url: url,
+      timestamp: new Date().toISOString()
+    });
   } catch (error) {
     res.status(500).json({ 
+      success: false,
       error: 'Failed to generate preview', 
-      details: error instanceof Error ? error.message : String(error) 
+      details: error instanceof Error ? error.message : String(error),
+      url: req.body.url,
+      timestamp: new Date().toISOString()
     });
   }
 });
