@@ -9,9 +9,6 @@ const port = process.env.PORT || 8081;
 app.use(cors());
 app.use(express.json());
 
-app.use(cors());
-app.use(express.json());
-
 const checkRobotsTxt = async (url: string): Promise<boolean> => {
   try {
     const { protocol, host } = new URL(url);

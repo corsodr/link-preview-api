@@ -13,13 +13,13 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "typescript": "^5.5.3",
     "cheerio": "^1.0.0-rc.12",
     "cors": "^2.8.5",
     "express": "^4.19.2",
     "robots-parser": "^3.0.1"
   },
   "devDependencies": {
+    "typescript": "^5.5.3",
     "@types/cheerio": "^0.22.35",
     "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",
