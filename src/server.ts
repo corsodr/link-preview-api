@@ -28,19 +28,11 @@ app.post('/api/preview', async (req, res) => {
     }
     const html = await response.text();
     const previewData = extractPreviewData(html, url);
-    res.json({
-      success: true,
-      data: previewData,
-      url: url,
-      timestamp: new Date().toISOString()
-    });
+    res.json(previewData);
   } catch (error) {
     res.status(500).json({ 
-      success: false,
-      error: 'Failed to generate preview', 
-      details: error instanceof Error ? error.message : String(error),
-      url: req.body.url,
-      timestamp: new Date().toISOString()
+      error: 'Failed to generate preview',
+      message: error instanceof Error ? error.message : String(error)
     });
   }
 });
