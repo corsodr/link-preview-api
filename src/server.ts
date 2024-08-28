@@ -15,16 +15,8 @@ app.post('/api/preview', async (req, res) => {
       return res.status(400).json({ error: 'URL is required' });
     }
     // update user agent info 
-    // const headers = {
-    //   'User-Agent': 'Mozilla/5.0 (compatible; LinkPreviewBot/1.0; +http://www.yourwebsite.com/bot.html)',
-    //   'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-    //   'Accept-Language': 'en-US,en;q=0.5',
-    //   'Accept-Encoding': 'gzip, deflate, br',
-    //   'Connection': 'keep-alive',
-    //   'Cache-Control': 'max-age=0',
-    // };
-     const headers = {
-      'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36',
+    const headers = {
+      'User-Agent': 'Mozilla/5.0 (compatible; LinkPreviewBot/1.0; +http://www.yourwebsite.com/bot.html)',
       'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
       'Accept-Language': 'en-US,en;q=0.5',
       'Accept-Encoding': 'gzip, deflate, br',
