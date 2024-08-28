@@ -1,39 +1,19 @@
 import express from 'express';
 import cors from 'cors';
 import { extractPreviewData } from './utils';
-import robotsParser from 'robots-parser';
 
 const app = express();
-const port = process.env.PORT || 8081;
+const port = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json());
 
-const checkRobotsTxt = async (url: string): Promise<boolean> => {
-  try {
-    const { protocol, host } = new URL(url);
-    const robotsTxtUrl = `${protocol}//${host}/robots.txt`;
-    const response = await fetch(robotsTxtUrl);
-    const robotsTxt = await response.text();
-    const robots = robotsParser(robotsTxtUrl, robotsTxt);
-    const isAllowed = robots.isAllowed(url, 'LinkPreviewBot') ?? true;
-    return isAllowed;
-  } catch (error) {
-    // why return true here?
-    return true;
-  }
-};
 app.post('/api/preview', async (req, res) => {
   try {
     const { url } = req.body;
     if (!url) {
       return res.status(400).json({ error: 'URL is required' });
     }
-    const isAllowed = await checkRobotsTxt(url);
-    if (!isAllowed) {
-      return res.status(403).json({ error: 'Access to this URL is not allowed by robots.txt' });
-    }
-
     // review headers 
     const headers = {
       'User-Agent': 'Mozilla/5.0 (compatible; LinkPreviewBot/1.0; +http://www.yourwebsite.com/bot.html)',
@@ -51,12 +31,13 @@ app.post('/api/preview', async (req, res) => {
     };
     const response = await fetch(url, { headers });
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      throw new Error(`HTTP error. Status: ${response.status}`);
     }
     const html = await response.text();
     const previewData = extractPreviewData(html, url);
+    // review res 
     res.json(previewData);
-    // review error 
+  // review error 
   } catch (error) {
     res.status(500).json({ 
       error: 'Failed to generate preview', 
