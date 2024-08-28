@@ -20,14 +20,9 @@ app.post('/api/preview', async (req, res) => {
       'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
       'Accept-Language': 'en-US,en;q=0.5',
       'Accept-Encoding': 'gzip, deflate, br',
-      'DNT': '1',
       'Connection': 'keep-alive',
-      'Upgrade-Insecure-Requests': '1',
-      'Sec-Fetch-Dest': 'document',
-      'Sec-Fetch-Mode': 'navigate',
-      'Sec-Fetch-Site': 'none',
-      'Sec-Fetch-User': '?1',
       'Cache-Control': 'max-age=0',
+      'Referer': 'https://link-preview-api-v1.vercel.app/api/preview'
     };
     const response = await fetch(url, { headers });
     if (!response.ok) {
