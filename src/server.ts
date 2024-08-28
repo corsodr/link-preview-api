@@ -43,6 +43,13 @@ import express from 'express';
      }
    });
 
+   app.get('/api/preview', (req, res) => {
+     res.json({
+       message: "Welcome to the Link Preview API",
+       usage: "Please send a POST request to this endpoint with a JSON body containing a 'url' field."
+     });
+   });
+
    app.listen(port, () => {
      console.log(`Server running on port ${port}`);
    });
