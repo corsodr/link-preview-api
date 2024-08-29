@@ -43,7 +43,7 @@ app.post('/api/preview', async (req, res) => {
     const html = await response.text();
     
     console.log('Received HTML length:', html.length);
-    console.log('First 1000 characters of HTML:', html.substring(0, 100));
+    console.log('First 1000 characters of HTML:', html.substring(0, 1000));
 
     const previewData = extractPreviewData(html, url);
 
