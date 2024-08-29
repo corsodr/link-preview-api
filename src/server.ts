@@ -20,7 +20,7 @@ app.post('/api/preview', async (req, res) => {
     if (!url) {
       return res.status(400).json({ error: 'URL is required' });
     }
-    console.log('Processing URL:', url);
+    // console.log('Processing URL:', url);
     const headers = {
       'User-Agent': 'Mozilla/5.0 (compatible; LinkPreviewBot/1.0; +http://www.yourwebsite.com/bot.html)',
       'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
@@ -30,11 +30,11 @@ app.post('/api/preview', async (req, res) => {
       'Cache-Control': 'max-age=0',
     };
 
-    console.log('Request headers:', headers);
+   // console.log('Request headers:', headers);
     
     const response = await fetch(url, { headers });
 
-    console.log('Response headers:', Object.fromEntries(response.headers));
+    // console.log('Response headers:', Object.fromEntries(response.headers));
 
     if (!response.ok) {
       throw new Error(`HTTP error. Status: ${response.status}`);
@@ -43,7 +43,8 @@ app.post('/api/preview', async (req, res) => {
     const html = await response.text();
     
     console.log('Received HTML length:', html.length);
-    console.log('First 1000 characters of HTML:', html.substring(0, 1000));
+    console.log('html', html)
+    // console.log('First 1000 characters of HTML:', html.substring(0, 1000));
 
     const previewData = extractPreviewData(html, url);
 
