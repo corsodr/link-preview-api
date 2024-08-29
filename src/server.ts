@@ -9,6 +9,16 @@ import express from 'express';
    app.use(cors());
    app.use(express.json());
 
+   app.get('/', (req, res) => {
+    res.json({
+      message: "Welcome to the Link Preview API",
+      endpoints: {
+        preview: "/api/preview"
+      },
+      documentation: "https://github.com/corsodr/link-preview-api#readme"
+    });
+  });
+
    app.post('/api/preview', async (req, res) => {
      try {
        const { url } = req.body;
@@ -41,13 +51,6 @@ import express from 'express';
          message: error instanceof Error ? error.message : String(error)
        });
      }
-   });
-
-   app.get('/api/preview', (req, res) => {
-     res.json({
-       message: "Welcome to the Link Preview API",
-       usage: "Please send a POST request to this endpoint with a JSON body containing a 'url' field."
-     });
    });
 
    app.listen(port, () => {
