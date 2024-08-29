@@ -14,11 +14,14 @@ app.get('/', (req, res) => {
 });
 
 app.post('/api/preview', async (req, res) => {
+  console.log('Received POST request to /api/preview');
+  console.log('Request body:', req.body);
   try {
     const { url } = req.body;
     if (!url) {
       return res.status(400).json({ error: 'URL is required' });
     }
+    console.log('Processing URL:', url);
     const headers = {
       'User-Agent': 'Mozilla/5.0 (compatible; LinkPreviewBot/1.0; +http://www.yourwebsite.com/bot.html)',
       'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
@@ -40,10 +43,8 @@ app.post('/api/preview', async (req, res) => {
     const previewData = extractPreviewData(html, url);
     res.json(previewData);
   } catch (error) {
-    res.status(500).json({ 
-      error: 'Failed to generate preview',
-      message: error instanceof Error ? error.message : String(error)
-    });
+    console.error('Failed to generate preview:', error);
+    res.status(500).json({ 'Failed to generate preview': error });
   }
 });
 
