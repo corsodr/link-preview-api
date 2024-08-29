@@ -45,7 +45,6 @@ app.post('/api/preview', async (req, res) => {
     fs.writeFileSync('/tmp/response.html', html);
 
     console.log('Received HTML length:', html.length);
-    console.log('html', html)
     // console.log('First 1000 characters of HTML:', html.substring(0, 1000));
 
     const previewData = extractPreviewData(html, url);
