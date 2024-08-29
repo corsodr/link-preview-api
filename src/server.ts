@@ -29,10 +29,11 @@ app.post('/api/preview', async (req, res) => {
       'Connection': 'keep-alive',
       'Cache-Control': 'max-age=0',
     };
+
     console.log('Request headers:', headers);
     
     const response = await fetch(url, { headers });
-    console.log('Response status:', response.status);
+
     console.log('Response headers:', Object.fromEntries(response.headers));
 
     if (!response.ok) {
@@ -42,14 +43,15 @@ app.post('/api/preview', async (req, res) => {
     const html = await response.text();
     
     console.log('Received HTML length:', html.length);
-    console.log('First 500 characters of HTML:', html.substring(0, 500));
+    console.log('First 1000 characters of HTML:', html.substring(0, 100));
 
     const previewData = extractPreviewData(html, url);
+
     console.log('Extracted preview data:', previewData);
     res.json(previewData);
   } catch (error) {
     console.error('Failed to generate preview:', error);
-    res.status(500).json({ error: 'Failed to generate preview', message: error.message });
+    res.status(500).json({ 'Failed to generate preview': error });
   }
 });
 
