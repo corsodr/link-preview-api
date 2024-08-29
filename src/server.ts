@@ -1,29 +1,10 @@
 import express from 'express';
 import cors from 'cors';
 import { extractPreviewData } from './utils';
-import * as fs from 'fs';
-import { HttpsProxyAgent } from 'https-proxy-agent';
-import axios from 'axios';
-
 const app = express();
-const port = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json());
-
-const proxyConfig = {
-  host: process.env.PROXY_HOST,
-  auth: {
-    username: process.env.PROXY_USERNAME,
-    password: process.env.PROXY_PASSWORD
-  }
-};
-
-const getProxyAgent = (url: string) => {
-  const isHttps = url.startsWith('https');
-  const proxyPort = isHttps ? 443 : 80;
-  return new HttpsProxyAgent(`http://${proxyConfig.auth.username}-session-${Date.now()}:${proxyConfig.auth.password}@${proxyConfig.host}:${proxyPort}`);
-};
 
 app.get('/', (req, res) => {
   res.send('This is a link preview API.');
@@ -37,7 +18,7 @@ app.get('/api/fullhtml', async (req, res) => {
       return res.status(400).json({ error: 'URL must be a string' });
     }
     console.log('Processing URL:', url);
-    
+
     const headers = {
       'User-Agent': 'Mozilla/5.0 (compatible; LinkPreviewBot/1.0; +http://www.yourwebsite.com/bot.html)',
       'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
@@ -47,14 +28,13 @@ app.get('/api/fullhtml', async (req, res) => {
       'Cache-Control': 'max-age=0',
     };
 
-    const httpsAgent = getProxyAgent(url);
-    const response = await axios.get(url, { headers, httpsAgent });
+    const response = await fetch(url, { headers });
 
-    if (response.status !== 200) {
+    if (!response.ok) {
       throw new Error(`HTTP error. Status: ${response.status}`);
     }
 
-    const html = response.data;
+    const html = await response.text();
     console.log('Received HTML length:', html.length);
 
     res.send(html); // Send the full HTML as the response
@@ -76,7 +56,7 @@ app.post('/api/preview', async (req, res) => {
     if (!url) {
       return res.status(400).json({ error: 'URL is required' });
     }
-    
+    // console.log('Processing URL:', url);
     const headers = {
       'User-Agent': 'Mozilla/5.0 (compatible; LinkPreviewBot/1.0; +http://www.yourwebsite.com/bot.html)',
       'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
@@ -85,21 +65,17 @@ app.post('/api/preview', async (req, res) => {
       'Connection': 'keep-alive',
       'Cache-Control': 'max-age=0',
     };
-
-    const httpsAgent = getProxyAgent(url);
-    const response = await axios.get(url, { headers, httpsAgent });
-
-    if (response.status !== 200) {
+   // console.log('Request headers:', headers);
+    
+    const response = await fetch(url, { headers });
+    // console.log('Response headers:', Object.fromEntries(response.headers));
+    if (!response.ok) {
       throw new Error(`HTTP error. Status: ${response.status}`);
     }
-
-    const html = response.data;
-    fs.writeFileSync('/tmp/response.html', html);
-
+    const html = await response.text();
     console.log('Received HTML length:', html.length);
-
+    // console.log('First 1000 characters of HTML:', html.substring(0, 1000));
     const previewData = extractPreviewData(html, url);
-
     console.log('Extracted preview data:', previewData);
     res.json(previewData);
   } catch (error) {
@@ -107,9 +83,3 @@ app.post('/api/preview', async (req, res) => {
     res.status(500).json({ 'Failed to generate preview': error });
   }
 });
-
-app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
-});
-
-export default app;
