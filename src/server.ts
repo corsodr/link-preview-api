@@ -1,7 +1,6 @@
 import express from 'express';
 import cors from 'cors';
 import { extractPreviewData } from './utils';
-import fs from 'fs/promises';
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -23,28 +22,34 @@ app.post('/api/preview', async (req, res) => {
     }
     console.log('Processing URL:', url);
     const headers = {
-      'User-Agent': 'Mozilla/5.0 (compatible; LinkPreviewBot/1.0; +http://www.yourwebsite.com/bot.html)',
-      'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-      'Accept-Language': 'en-US,en;q=0.5',
+      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+      'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
+      'Accept-Language': 'en-US,en;q=0.9',
       'Accept-Encoding': 'gzip, deflate, br',
       'Connection': 'keep-alive',
       'Cache-Control': 'max-age=0',
     };
+    console.log('Request headers:', headers);
+    
     const response = await fetch(url, { headers });
+    console.log('Response status:', response.status);
+    console.log('Response headers:', Object.fromEntries(response.headers));
+
     if (!response.ok) {
       throw new Error(`HTTP error. Status: ${response.status}`);
     }
+
     const html = await response.text();
     
-    // Log the HTML response
-    console.log('Received HTML:', html);
-    
+    console.log('Received HTML length:', html.length);
+    console.log('First 500 characters of HTML:', html.substring(0, 500));
 
     const previewData = extractPreviewData(html, url);
+    console.log('Extracted preview data:', previewData);
     res.json(previewData);
   } catch (error) {
     console.error('Failed to generate preview:', error);
-    res.status(500).json({ 'Failed to generate preview': error });
+    res.status(500).json({ error: 'Failed to generate preview', message: error.message });
   }
 });
 
