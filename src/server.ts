@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import { extractPreviewData } from './utils';
+import * as fs from 'fs';
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -41,7 +42,8 @@ app.post('/api/preview', async (req, res) => {
     }
 
     const html = await response.text();
-    
+    fs.writeFileSync('/tmp/response.html', html);
+
     console.log('Received HTML length:', html.length);
     console.log('html', html)
     // console.log('First 1000 characters of HTML:', html.substring(0, 1000));
