@@ -1,6 +1,7 @@
 import { google } from 'googleapis';
 import { Preview } from '../types';
 import dotenv from 'dotenv';
+import { processImage } from './processImage';
 
 dotenv.config();
 
@@ -24,12 +25,18 @@ export async function getYouTubePreviewData(url: string): Promise<Preview | null
       const snippet = video.snippet!;
       const thumbnails = snippet.thumbnails || {};
       
-      const image = thumbnails.maxres?.url || 
-                    thumbnails.standard?.url || 
-                    thumbnails.high?.url || 
-                    thumbnails.medium?.url || 
-                    thumbnails.default?.url || 
-                    '';
+      const imageUrl = thumbnails.maxres?.url || 
+                       thumbnails.standard?.url || 
+                       thumbnails.high?.url || 
+                       thumbnails.medium?.url || 
+                       thumbnails.default?.url || 
+                       '';
+
+      let processedImage = '';
+      if (imageUrl) {
+        const imageBuffer = await processImage(imageUrl);
+        processedImage = `data:image/jpeg;base64,${imageBuffer.toString('base64')}`;
+      }
 
       return {
         url,
@@ -37,7 +44,7 @@ export async function getYouTubePreviewData(url: string): Promise<Preview | null
         title: snippet.title || '',
         favicon: 'https://www.youtube.com/favicon.ico',
         description: snippet.description || '',
-        image,
+        image: processedImage,
       };
     }
     return null;

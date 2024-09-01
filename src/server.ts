@@ -43,7 +43,7 @@ app.post('/api/preview', async (req, res) => {
     }
 
     const html = await response.text();
-    const previewData = getPreviewData(html, url);
+    const previewData = await getPreviewData(html, url);
     res.json(previewData);
   } catch (error) {
     console.error('Failed to generate preview:', error);

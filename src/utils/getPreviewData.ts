@@ -1,7 +1,8 @@
 import * as cheerio from 'cheerio';
 import { Preview } from '../types';
+import { processImage } from './processImage';
 
-export function getPreviewData(html: string, url: string): Preview {
+export async function getPreviewData(html: string, url: string): Promise<Preview> {
     const $ = cheerio.load(html);
 
     const getMetatag = (name: string) => 
@@ -16,11 +17,17 @@ export function getPreviewData(html: string, url: string): Preview {
         return favicon ? new URL(favicon, url).href : '';
     }
 
-    const getImage = (): string => {
+    const getImage = async (): Promise<string> => {
         const image = getMetatag('image') ||
                       $('link[rel="image_src"]').attr('href') ||
                       '';
-        return image ? new URL(image, url).href : '';
+        if (image) {
+            const imageUrl = new URL(image, url).href;
+            const processedImage = await processImage(imageUrl);
+            // Convert the processed image to a base64 string
+            return `data:image/jpeg;base64,${processedImage.toString('base64')}`;
+        }
+        return '';
     }
 
     const getDomain = (url: string): string => {
@@ -34,6 +41,6 @@ export function getPreviewData(html: string, url: string): Preview {
         title: $('title').text() || '',
         favicon: getFavicon(),
         description: getMetatag('description'),
-        image: getImage(),
+        image: await getImage(),
     };
 }
