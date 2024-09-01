@@ -3,7 +3,6 @@ import cors from 'cors';
 import { getPreviewData } from './utils/getPreviewData';
 import { isYouTubeUrl, getYouTubePreviewData } from './utils/getYouTubePreviewData';
 
-// trigger redeploy
 const app = express();
 
 app.use(cors());

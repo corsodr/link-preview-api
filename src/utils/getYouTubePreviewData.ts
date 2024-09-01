@@ -22,13 +22,22 @@ export async function getYouTubePreviewData(url: string): Promise<Preview | null
     if (response.data.items && response.data.items.length > 0) {
       const video = response.data.items[0];
       const snippet = video.snippet!;
+      const thumbnails = snippet.thumbnails || {};
+      
+      const image = thumbnails.maxres?.url || 
+                    thumbnails.standard?.url || 
+                    thumbnails.high?.url || 
+                    thumbnails.medium?.url || 
+                    thumbnails.default?.url || 
+                    '';
+
       return {
         url,
         domain: 'youtube.com',
         title: snippet.title || '',
         favicon: 'https://www.youtube.com/favicon.ico',
         description: snippet.description || '',
-        image: snippet.thumbnails?.high?.url || '',
+        image,
       };
     }
     return null;
