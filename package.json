@@ -4,6 +4,7 @@
   "description": "",
   "main": "dist/server.js",
   "scripts": {
+    "prestart": "npm run build",
     "start": "node dist/server.js",
     "build": "tsc",
     "dev": "ts-node src/server.ts"

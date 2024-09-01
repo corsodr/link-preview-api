@@ -6,7 +6,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// should I keep process.env.PORT?
+// review proccess.env.PORT
 const port = process.env.PORT || 3000;
 
 app.get('/', (req, res) => {
