@@ -2,7 +2,6 @@ import { google } from 'googleapis';
 import { Preview } from '../types';
 import dotenv from 'dotenv';
 
-// put here or in server.ts?
 dotenv.config();
 
 const youtube = google.youtube({
