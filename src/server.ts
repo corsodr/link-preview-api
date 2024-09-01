@@ -47,5 +47,3 @@ app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });
 
-// should I keep this? 
-module.exports = app;
