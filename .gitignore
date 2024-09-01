@@ -1,6 +1,7 @@
 /node_modules
 todo.md
 /dist
+.env
 
 # Elastic Beanstalk Files
 .elasticbeanstalk/*

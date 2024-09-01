@@ -1,12 +1,13 @@
 import express from 'express';
 import cors from 'cors';
-import { extractPreviewData } from './utils';
+import { getPreviewData } from './utils/getPreviewData';
+import { isYouTubeUrl, getYouTubePreviewData } from './utils/getYouTubePreviewData';
+
 const app = express();
 
 app.use(cors());
 app.use(express.json());
 
-// review proccess.env.PORT
 const port = process.env.PORT || 3000;
 
 app.get('/', (req, res) => {
@@ -18,6 +19,13 @@ app.post('/api/preview', async (req, res) => {
     const { url } = req.body;
     if (!url) {
       return res.status(400).json({ error: 'URL is required' });
+    }
+
+    if (isYouTubeUrl(url)) {
+      const youtubeData = await getYouTubePreviewData(url);
+      if (youtubeData) {
+        return res.json(youtubeData);
+      }
     }
 
     const headers = {
@@ -35,11 +43,11 @@ app.post('/api/preview', async (req, res) => {
     }
 
     const html = await response.text();
-    const previewData = extractPreviewData(html, url);
+    const previewData = getPreviewData(html, url);
     res.json(previewData);
   } catch (error) {
     console.error('Failed to generate preview:', error);
-    res.status(500).json({ 'Failed to generate preview': error });
+    res.status(500).json({ error: 'Failed to generate preview' });
   }
 });
 
