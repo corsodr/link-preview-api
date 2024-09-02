@@ -2,6 +2,7 @@ import { google } from 'googleapis';
 import { Preview } from '../types';
 import dotenv from 'dotenv';
 import { processImage } from './processImage';
+import { uploadToS3 } from './uploadToS3';
 
 dotenv.config();
 
@@ -34,8 +35,8 @@ export async function getYouTubePreviewData(url: string): Promise<Preview | null
 
       let processedImage = '';
       if (imageUrl) {
-        const imageBuffer = await processImage(imageUrl);
-        processedImage = `data:image/jpeg;base64,${imageBuffer.toString('base64')}`;
+        const { buffer, mimeType } = await processImage(imageUrl);
+        processedImage = await uploadToS3(buffer, mimeType);
       }
 
       return {

@@ -1,6 +1,7 @@
 import * as cheerio from 'cheerio';
 import { Preview } from '../types';
 import { processImage } from './processImage';
+import { uploadToS3 } from './uploadToS3';
 
 export async function getPreviewData(html: string, url: string): Promise<Preview> {
     const $ = cheerio.load(html);
@@ -22,10 +23,9 @@ export async function getPreviewData(html: string, url: string): Promise<Preview
                       $('link[rel="image_src"]').attr('href') ||
                       '';
         if (image) {
-            const imageUrl = new URL(image, url).href;
-            const processedImage = await processImage(imageUrl);
-            // Convert the processed image to a base64 string
-            return `data:image/jpeg;base64,${processedImage.toString('base64')}`;
+        const imageUrl = new URL(image, url).href;
+        const { buffer, mimeType } = await processImage(imageUrl);
+        return await uploadToS3(buffer, mimeType);
         }
         return '';
     }
