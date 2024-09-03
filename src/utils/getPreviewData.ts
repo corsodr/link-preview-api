@@ -1,9 +1,7 @@
 import * as cheerio from 'cheerio';
 import { Preview } from '../types';
-import { processImage } from './processImage';
-import { uploadToS3 } from './uploadToS3';
 
-export async function getPreviewData(html: string, url: string): Promise<Preview> {
+export function getPreviewData(html: string, url: string): Preview {
     const $ = cheerio.load(html);
 
     const getMetatag = (name: string) => 
@@ -18,16 +16,11 @@ export async function getPreviewData(html: string, url: string): Promise<Preview
         return favicon ? new URL(favicon, url).href : '';
     }
 
-    const getImage = async (): Promise<string> => {
+    const getImage = (): string => {
         const image = getMetatag('image') ||
                       $('link[rel="image_src"]').attr('href') ||
                       '';
-        if (image) {
-        const imageUrl = new URL(image, url).href;
-        const { buffer, mimeType } = await processImage(imageUrl);
-        return await uploadToS3(buffer, mimeType);
-        }
-        return '';
+        return image ? new URL(image, url).href : '';
     }
 
     const getDomain = (url: string): string => {
@@ -41,6 +34,6 @@ export async function getPreviewData(html: string, url: string): Promise<Preview
         title: $('title').text() || '',
         favicon: getFavicon(),
         description: getMetatag('description'),
-        image: await getImage(),
+        image: getImage(),
     };
 }
